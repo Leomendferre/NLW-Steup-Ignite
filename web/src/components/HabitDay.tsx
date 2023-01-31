@@ -5,14 +5,15 @@ import { ProgressBar } from './ProgressBar';
 import { Check } from 'phosphor-react';
 
 interface HabitDayProps {
-  completed: number
-  amount: number
+  date: Date
+  completed?: number
+  amount?: number
 }
 
-export function HabitDay({ completed, amount}: HabitDayProps){
-  const completedPercentage = Math.round((completed/ amount) * 100)
+export function HabitDay({ completed = 0, amount = 0}: HabitDayProps){
+  const completedPercentage = amount > 0 ? Math.round((completed/ amount) * 100) : 0
 
-  return(
+  return (
     <Popover.Root>
       <Popover.Trigger 
       className={clsx('w-10 h-10  border-2  rounded-lg', {
