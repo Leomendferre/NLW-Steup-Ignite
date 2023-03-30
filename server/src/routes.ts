@@ -25,7 +25,7 @@ export async function appRoutes(app: FastifyInstance) {
             return {
               week_day: weekDay,
             }
-          })
+          }),
         }
       }
     })
@@ -51,7 +51,7 @@ export async function appRoutes(app: FastifyInstance) {
             week_day: weekDay,
           }
         }
-      }
+      },
     })
 
     const day = await prisma.day.findUnique({
@@ -63,18 +63,17 @@ export async function appRoutes(app: FastifyInstance) {
       }
     })
 
-    const completeHabits = day?.dayHabits.map(dayHabit => {
+    const completedHabits = day?.dayHabits.map(dayHabit => {
       return dayHabit.habit_id
-    })
+    }) ?? []
 
     return{
       possibleHabits,
-      completeHabits,
+      completedHabits,
     }
   })
 
   app.patch('/habits/:id/toggle', async (request) => {
-    
     const toggleHabitsParams = z.object({
       id: z.string().uuid(),
     })
@@ -92,7 +91,7 @@ export async function appRoutes(app: FastifyInstance) {
     if (!day) {
       day = await prisma.day.create({
         data: {
-          date: today,
+          date: today
         }
       })
     }
@@ -101,7 +100,7 @@ export async function appRoutes(app: FastifyInstance) {
       where: {
         day_id_habit_id: {
           day_id: day.id,
-          habit_id: id,
+          habit_id: id
         }
       }
     }) 
@@ -116,7 +115,7 @@ export async function appRoutes(app: FastifyInstance) {
       await prisma.dayHabit.create({
         data: {
           day_id: day.id,
-          habit_id: id,
+          habit_id: id
         }
       })
     }
@@ -130,13 +129,13 @@ export async function appRoutes(app: FastifyInstance) {
         D.date,
         (
           SELECT 
-            cast(count(*)as float)
+            cast(count(*) as float)
           FROM day_habits DH
           WHERE DH.day_id = D.id
         ) as completed,
         (
           SELECT
-             cast(count(*)as float)
+             cast(count(*) as float)
            FROM habit_week_days HWD
            JOIN habits H
             ON H.id = HWD.habit_id
